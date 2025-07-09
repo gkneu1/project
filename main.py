@@ -38,16 +38,68 @@ content = {
     }
 }
 
+# 세션 상태 초기화
+if "step" not in st.session_state:
+    st.session_state.step = 1
+if "name" not in st.session_state:
+    st.session_state.name = ""
+if "age" not in st.session_state:
+    st.session_state.age = 0
+if "method" not in st.session_state:
+    st.session_state.method = ""
+
 st.title("📚 청소년 학업 스트레스 해소 앱")
 
-# 이름 입력
-name = st.text_input("이름을 입력해주세요")
+def next_step():
+    st.session_state.step += 1
 
-# 나이 입력
-age = st.number_input("나이를 입력하세요 (만)", min_value=10, max_value=19, step=1)
+def prev_step():
+    if st.session_state.step > 1:
+        st.session_state.step -= 1
 
-if name and age:
-    # 연령대 구분
+# 1단계: 이름 입력
+if st.session_state.step == 1:
+    name_input = st.text_input("이름을 입력해주세요", value=st.session_state.name)
+    if st.button("다음"):
+        if name_input.strip() == "":
+            st.warning("이름을 입력해주세요.")
+        else:
+            st.session_state.name = name_input.strip()
+            next_step()
+
+# 2단계: 나이 입력
+elif st.session_state.step == 2:
+    age_input = st.number_input("나이를 입력하세요 (만)", min_value=10, max_value=19, step=1, value=st.session_state.age if st.session_state.age != 0 else 10)
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("이전"):
+            prev_step()
+    with col2:
+        if st.button("다음"):
+            if age_input == 0:
+                st.warning("나이를 입력해주세요.")
+            else:
+                st.session_state.age = age_input
+                next_step()
+
+# 3단계: 스트레스 해소 방법 선택
+elif st.session_state.step == 3:
+    method_input = st.selectbox("스트레스를 어떤 방법으로 풀고 싶나요?", ("음악", "글", "영상"), index=0)
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("이전"):
+            prev_step()
+    with col2:
+        if st.button("다음"):
+            st.session_state.method = method_input
+            next_step()
+
+# 4단계: 결과 출력
+elif st.session_state.step == 4:
+    name = st.session_state.name
+    age = st.session_state.age
+    method = st.session_state.method
+
     if age <= 14:
         group = "middle"
         st.markdown(f"👋 안녕하세요, {name}님! 중학생 여러분 환영합니다!")
@@ -55,32 +107,30 @@ if name and age:
         group = "high"
         st.markdown(f"👋 안녕하세요, {name}님! 고등학생 여러분 환영합니다!")
 
-    method = st.selectbox("스트레스를 어떤 방법으로 풀고 싶나요?", ("음악", "글", "영상"))
-
     st.markdown("---")
 
     if method == "음악":
         st.subheader("🎵 추천 음악")
-        title, url = content[group]["music"][0]  # 첫 번째 추천 음악
+        title, url = content[group]["music"][0]
         st.markdown(f"[{title}]({url})")
 
     elif method == "글":
         st.subheader("📝 위로가 되는 글")
-        text = content[group]["text"][0]  # 첫 번째 추천 글
+        text = content[group]["text"][0]
         st.markdown(f"> {text}")
 
     elif method == "영상":
         st.subheader("🎥 추천 영상")
-        title, url = content[group]["video"][0]  # 첫 번째 추천 영상
+        title, url = content[group]["video"][0]
         st.markdown(f"[{title}]({url})")
 
     st.markdown("---")
     st.success(f"{name}님, 스트레스가 조금은 풀렸길 바랄게요 😊")
 
-elif not name:
-    st.warning("이름을 입력해주세요.")
-
-elif not age:
-    st.warning("나이를 입력해주세요.")
+    if st.button("처음으로 돌아가기"):
+        st.session_state.step = 1
+        st.session_state.name = ""
+        st.session_state.age = 0
+        st.session_state.method = ""
 
 st.markdown("🧠 마음이 힘들 때는 선생님이나 상담센터에 꼭 도움을 요청하세요.")
