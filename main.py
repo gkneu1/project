@@ -48,7 +48,7 @@ if "age" not in st.session_state:
 if "method" not in st.session_state:
     st.session_state.method = ""
 
-st.title("📚 청소년 학업 스트레스 해소 앱")
+st.title("📚 청소년 정신 건강 지키미")
 
 def next_step():
     st.session_state.step += 1
