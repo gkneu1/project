@@ -22,7 +22,6 @@ st.title("📚 청소년 학업 스트레스 해소 앱")
 # 사용자 입력
 age = st.number_input("나이를 입력하세요 (만)", min_value=10, max_value=19, step=1)
 
-# 나이 확인
 if age:
     st.markdown(f"🎉 안녕하세요, {age}세 학생 여러분!")
 
@@ -31,24 +30,22 @@ if age:
 
     st.markdown("---")
 
-    # 콘텐츠 제공
     if method == "음악":
         st.subheader("🎵 추천 음악")
-        for title, url in music_links:
-            st.markdown(f"- [{title}]({url})")
+        title, url = music_links[0]  # 첫 번째 음악만 추천
+        st.markdown(f"[{title}]({url})")
 
     elif method == "글":
         st.subheader("📝 위로가 되는 글")
-        for text in reading_texts:
-            st.markdown(f"> {text}")
+        text = reading_texts[0]  # 첫 번째 글만 추천
+        st.markdown(f"> {text}")
 
     elif method == "영상":
         st.subheader("🎥 추천 영상")
-        for title, url in video_links:
-            st.markdown(f"- [{title}]({url})")
+        title, url = video_links[0]  # 첫 번째 영상만 추천
+        st.markdown(f"[{title}]({url})")
 
     st.markdown("---")
     st.success("스트레스가 조금은 풀렸길 바랄게요 😊")
 
-# 하단 안내
 st.markdown("🧠 마음이 힘들 때는 선생님이나 상담센터에 꼭 도움을 요청하세요.")
